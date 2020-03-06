@@ -6,9 +6,9 @@ import sys
 from multiprocessing import Pool #多进程
 import logging
 import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
-path = os.path.join(os.getcwd()+os.sep+'CS166'+os.sep+'slides'+os.sep)
-#TODO：  断点重连部分需要解决。现在下载还是不完整
+
+#TODO:  断点重连部分需要解决。现在下载还是不完整
+#TODO:  使用beautiful soup或者lxml 来优雅地处理html数据。 
 
 def download_file(url,path,filename):
     
@@ -54,14 +54,12 @@ def find_url(html, keyword, reg):
         return []
 
 def download_process(down_url,keyword):
-    
-    url = 'http://web.stanford.edu/class/cs161/'+ down_url
-    
-    filename =''.join(re.findall("Lecture\d{1,2}[^/]*\."+keyword,down_url,re.S))
-
+    #cs161 url = 'http://web.stanford.edu/class/cs161/'
+    #cs 166 https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/lectures/00/Slides00.pdf
+    url = 'https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/'
+    url = url + down_url
+    filename =  down_url.split('/')[-1]
     print('正在下载' + filename + '个文件，图片地址:' + path+filename)
- 
-
     download_file(url,path,filename)
 
 
@@ -72,26 +70,22 @@ def download_process(down_url,keyword):
 #cs 161 下载地址 http://web.stanford.edu/class/cs161/Lectures/Lecture1/Lecture1.pptx
 #cs  166 下载地址 https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/lectures/00/Slides00.pdf
 if __name__ == '__main__':
-    word = input("Input key word: ")
-    #url = 'http://web.stanford.edu/class/cs161/schedule.html' #获取下载地址的url 需要分析
-    #url = input("Input url:")
-    url = 'https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/'
-    #reg = input("Input regex:")
-    reg = '(?<=a href=").*Slides\d*.pdf(?=">)'
-    '''
-    cs161 reg = '(?<=a href=").*Slides\d*[^/]*.pdf(?=">)'
-    cs166 reg = '(?<=a href=").*Slides\d*.pdf(?=">)'
-    '''
+    keyword = input("Input file type: ")
+    url = input("Input url:")
+    reg = input("Input regex:")
+     
     result = requests.get(url)
-    
-    down_url = find_url(result.text, word,reg) # 获取下载地址
-    
+    down_url = find_url(result.text.encode('ISO-8859-1').decode('utf-8'), keyword,reg) 
+    #  查看resul.encode 来查看编码方式。填入相应的编码解码方式。
+    #获取下载地址
+    path_name = input('储存文件夹名字')
+    path = os.path.join(os.getcwd()+os.sep+path_name+os.sep+keyword+os.sep)
     if down_url != []:
     #多进程
         p = Pool(5)
         print(down_url)
         for i in down_url:
-            p.apply_async(download_process,args=(i,word,))
+            p.apply_async(download_process,args=(i,keyword,))
         print('Waiting for all subprocesses done...')
         p.close()
         p.join()
