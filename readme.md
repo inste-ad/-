@@ -1,18 +1,25 @@
-#示例
+现目前就写了一个下载各个名校的计算机slides 的程序。有兴趣会在更新。
+为了通用性，需要手动更换url和reg。部分已经下过的网址如下：
+# url示例
+
     cs161 reg = '(?<=a href=").*Slides\d*[^/]*.pdf(?=">)'
+
     cs166 reg = '(?<=<li><a href=").{1,20}/Slides\d*.pdf(?=">)'
+
     cs61A reg = '(?<=a href=")slides/.{1,25}\.(pdf|py)(?=">)'
+
     cmu network reg = '(?<=a href=")slides/.{1,25}\.pdf(?=">)'
+    
     cs61B reg = '(?<=a href=")materials/.{1,20}\.pdf(?=")'
 
-#main中的url
+# main中的url
     #url = 'http://web.stanford.edu/class/cs161/schedule.html' #获取下载地址的url 需要分析
     #url = 'https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/'
     #url = 'http://www-inst.eecs.berkeley.edu/~cs61a/fa11/61a-python/content/www/index.html' cs61A
     #url = 'https://computer-networks.github.io/sp19/lectures.html' 
     #url = 'https://inst.eecs.berkeley.edu/~cs61b/fa19/' cs61A
 
-#CS234 reinforcement learning
+# CS234 reinforcement learning
     url= r'http://web.stanford.edu/class/cs234/slides/'
     reg = '(?<=a href=").{1,20}\.pdf(?=")'  
 
