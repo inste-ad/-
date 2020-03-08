@@ -20,12 +20,13 @@ def download_file(url,path,filename):
     try:
         r = requests.get(url, timeout = 10000, stream=True)
     except requests.exceptions.ConnectionError:
-        print('【错误】当前文件无法下载')
+        print('【错误】当前文件无法下载'+filename)
+        with open('log.txt') as f:
+            f.write(filename+"下载失败")
 
     
     total_size = int(r.headers['Content-Length'])
     temp_size = 0
-    print(path,filename)
     with open(path+filename, 'wb') as f:
         
         for chunk in r.iter_content(chunk_size=1024): 
@@ -35,11 +36,11 @@ def download_file(url,path,filename):
                 f.flush()
                 
                 #############花哨的下载进度部分###############
-                done = int(50 * temp_size / total_size)
-                # 调用标准输出刷新命令行，看到\r回车符了吧
-                # 相当于把每一行重新刷新一遍
-                sys.stdout.write("\r[%s%s] %d%%" % ('█' * done, ' ' * (50 - done), 100 * temp_size / total_size))
-                sys.stdout.flush()
+                # done = int(50 * temp_size / total_size)
+                # # 调用标准输出刷新命令行，看到\r回车符了吧
+                # # 相当于把每一行重新刷新一遍
+                # sys.stdout.write("\r[%s%s] %d%%" % ('█' * done, ' ' * (50 - done), 100 * temp_size / total_size))
+                # sys.stdout.flush()
 
     return filename
 
@@ -57,14 +58,14 @@ def find_url(html, keyword, reg):
 def download_process(down_url,keyword,path):
     #cs161 url = 'http://web.stanford.edu/class/cs161/'
     #cs 166 https://web.stanford.edu/class/archive/cs/cs166/cs166.1146/lectures/00/Slides00.pdf
-    url = r'https://15445.courses.cs.cmu.edu/fall2019'
+    url = r'http://www.cs.cmu.edu/afs/cs/academic/class/15213-f19/www/'
     url = url+down_url
-    print(url)
     filename =  down_url.split('/')[-1]
-    print (filename)
-    print('正在下载' + filename + '个文件，图片地址:' + path+filename)
+    print('正在下载' + filename )
     download_file(url,path,filename)
-
+    with open('log.txt','a') as f:
+        f.write(filename+"下载成功\n")
+    
 
 
 #cs 161 下载地址 http://web.stanford.edu/class/cs161/Lectures/Lecture1/Lecture1.pptx
@@ -75,8 +76,8 @@ if __name__ == '__main__':
     # reg = input("Input regex:")
     
     keyword="pdf"
-    url= r'https://15445.courses.cs.cmu.edu/fall2019/schedule.html'
-    reg = '(?<=href="\.).{1,30}\.pdf(?=")'  
+    url= r'http://www.cs.cmu.edu/afs/cs/academic/class/15213-f19/www/schedule.html'
+    reg = '(?<=a href=").{1,51}\.pdf(?=")'  
 
     result = requests.get(url)
     down_url = find_url(result.text.encode('ISO-8859-1').decode('utf-8'), keyword,reg) 
@@ -89,7 +90,7 @@ if __name__ == '__main__':
         # for i in down_url:
         #     download_process(i,keyword,path)
         #多进程
-        p = Pool(5)
+        p = Pool(20)
         print(down_url)
         for i in down_url:
             p.apply_async(download_process,args=(i,keyword,path))

@@ -16,7 +16,17 @@
     url= r'http://web.stanford.edu/class/cs234/slides/'
     reg = '(?<=a href=").{1,20}\.pdf(?=")'  
 
-# cmu 15-445
+# cmu 15-445 數據庫
     url = https://15445.courses.cs.cmu.edu/fall2019/schedule.html
     reg ='(?<=href="\.).{1,30}\.pdf(?=")'
     down_url = https://15445.courses.cs.cmu.edu/fall2019  +  /slides/23-distributedoltp.pdf
+
+# cmu 15-410 操作系統
+    url = 'https://www.cs.cmu.edu/~410/lecture.html'
+    reg = '(?<=a href=").{1,20}\.pdf(?=")'
+    down_url = https://www.cs.cmu.edu/~410/ + lectures/L04_Process.pdf
+
+# cmu 15-213 计算机系统 csapp
+    url ='http://www.cs.cmu.edu/afs/cs/academic/class/15213-f19/www/schedule.html'
+    reg = '(?<=a href=").{1,51}\.pdf(?=")'
+    http://www.cs.cmu.edu/afs/cs/academic/class/15213-f19/www/ + recitations/recitation03-datalab.pdf
